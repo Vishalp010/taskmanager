@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -21,7 +22,7 @@ const SignUpPage = () => {
   const onSignUp = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/users/signup", user);
+      await axios.post("/api/users/signup", user);
       router.push("/login");
       toast.success("Signup successful!");
     } catch (error: any) {

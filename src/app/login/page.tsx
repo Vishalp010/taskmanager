@@ -16,19 +16,42 @@ const LoginPage = () => {
   const [buttonDisabled,setButtonDisabled] = useState(true)
   const [loading,setLoading]= useState(false)
 
+  // const onLogin = async () => {
+  //   try {
+  //     setLoading(true)
+  //     await axios.post("/api/users/login",user)
+  //     toast.success('Login succefully')
+  //     router.push('/')
+  //   } catch (error:any) {
+  //     console.log('login Failed', error.message)
+  //     toast.error(error.message)
+  //   }finally{
+  //     setLoading(false)
+  //   }
+  // };
   const onLogin = async () => {
     try {
-      setLoading(true)
-      await axios.post("/api/users/login",user)
-      toast.success('Login succefully')
-      router.push('/')
-    } catch (error:any) {
-      console.log('login Failed', error.message)
-      toast.error(error.message)
-    }finally{
-      setLoading(false)
+      setLoading(true);
+      await axios.post("/api/users/login", user);
+      toast.success("Login successfully");
+      router.push("/");
+    } catch (error: unknown) { // Use 'unknown' instead of 'any'
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific errors
+        console.log("Login Failed", error.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || "Something went wrong!");
+      } else if (error instanceof Error) {
+        // Handle other Error instances
+        console.log("Login Failed", error.message);
+        toast.error(error.message);
+      } else {
+        // Handle unexpected error types
+        console.log("Login Failed", error);
+        toast.error("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
     }
-
   };
 
   useEffect(() => {

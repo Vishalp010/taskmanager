@@ -3,28 +3,46 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { addTask, removeTask, updateTask } from './features/taskmanager/taskManagerSlice'
-import { store } from './store/store'
+import { RootState } from './store/store'
 import { toast, Toaster } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
 const HomePage = () => {
   const router = useRouter()
+  // const logout = async () => {
+  //   try {
+  //     await axios.get('/api/users/logout')
+  //     toast.success("Logout successful")
+  //     router.push('/login')
+  //   } catch (error: any) {
+  //     console.log(error.message)
+  //     toast.error(error.message)
+  //   }
+  // }
   const logout = async () => {
     try {
-      await axios.get('/api/users/logout')
-      toast.success("Logout successful")
-      router.push('/login')
-    } catch (error: any) {
-      console.log(error.message)
-      toast.error(error.message)
+      await axios.get('/api/users/logout');
+      toast.success("Logout successful");
+      router.push('/login');
+    } catch (error: unknown) { // Use 'unknown' instead of 'any'
+      if (axios.isAxiosError(error)) {
+        // Handle Axios error
+        console.log(error.message);
+        toast.error(error.message);
+      } else {
+        // Handle unexpected error
+        console.log("An unexpected error occurred:", error);
+        toast.error("Something went wrong.");
+      }
     }
-  }
+  };
+  
 
   const [taskText, setTaskText] = useState("") // State to track new task input
   const [editText, setEditText] = useState("") // State to track edit input
   const [editId, setEditId] = useState("") // State to track the task being edited
   const dispatch = useDispatch()
-  const tasks = useSelector((state: store) => state.task.tasks)
+  const tasks = useSelector((state: RootState) => state.task.tasks)
 
   const handleAddTask = () => {
     if (taskText.trim()) {

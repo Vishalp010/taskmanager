@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -19,19 +18,43 @@ const SignUpPage = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // const onSignUp = async () => {
+  //   try {
+  //     setLoading(true);
+  //     await axios.post("/api/users/signup", user);
+  //     router.push("/login");
+  //     toast.success("Signup successful!");
+  //   } catch (error: any) {
+  //     console.log("signup Failed", error.message);
+  //     toast.error(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const onSignUp = async () => {
     try {
       setLoading(true);
       await axios.post("/api/users/signup", user);
       router.push("/login");
       toast.success("Signup successful!");
-    } catch (error: any) {
-      console.log("signup Failed", error.message);
-      toast.error(error.message);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        // Handle Axios-specific error
+        console.log("Signup Failed:", error.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || "Something went wrong!");
+      } else if (error instanceof Error) {
+        // Handle generic error
+        console.log("Signup Failed:", error.message);
+        toast.error(error.message);
+      } else {
+        console.log("Signup Failed:", error);
+        toast.error("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (user?.email?.length > 0 && user?.password?.length > 0 && user?.username?.length > 0) {
